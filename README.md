@@ -123,13 +123,6 @@ Esses endpoints são servidos via `drf-yasg` e expõem a especificação da API.
 
 Para ver todos os endpoints e testar via UI, abra `/swagger/` após iniciar o servidor.
 
-## Testes
-
-Para executar os testes automatizados:
-
-```bash
-poetry run python manage.py test
-```
 
 ## Dicas e troubleshooting
 
