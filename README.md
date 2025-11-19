@@ -107,9 +107,139 @@ estão sob `http://127.0.0.1:8000/api/`.
 
 ## Endpoints importantes
 
-- `GET /api/projetos/` — listar projetos
-- `GET /api/projetos/{id}/` — detalhes de um projeto
-- Outros endpoints registrados pelo `DefaultRouter` do DRF no `api/urls.py`.
+### API de Gerenciamento de Projetos, Tarefas e Responsáveis  
+**Base URL (dev):** `http://127.0.0.1:8000/api/`  
+**Django 5.2 + DRF 3.16**  
+**Permissões atuais:** `AllowAny` (aberta para testes)
+
+> Rode o servidor com:  
+> ```bash
+> poetry run python manage.py runserver
+> ```
+
+---
+
+### 1. Responsáveis (/responsaveis/)
+
+| Método | Endpoint                     | Descrição                        | Campos obrigatórios          |
+|--------|------------------------------|----------------------------------|------------------------------|
+| GET    | `/api/responsaveis/`         | Lista todos os responsáveis      | -                            |
+| GET    | `/api/responsaveis/{id}/`    | Detalhe de um responsável        | -                            |
+| POST   | `/api/responsaveis/`         | Cria novo responsável            | `nome`, `email`              |
+| PUT    | `/api/responsaveis/{id}/`    | Atualiza todos os campos         | `nome`, `email`              |
+| PATCH  | `/api/responsaveis/{id}/`    | Atualiza campos parciais         | -                            |
+| DELETE | `/api/responsaveis/{id}/`    | Remove responsável               | -                            |
+
+**Exemplo de body (POST/PUT):**
+```json
+{
+  "nome": "Maria Silva",
+  "email": "maria@empresa.com",
+  "telefone": "(11) 98765-4321"
+}
+```
+
+---
+
+### 2. Projetos (/projetos/)
+
+| Método | Endpoint                  | Descrição                     | Campos obrigatórios |
+|--------|---------------------------|-------------------------------|---------------------|
+| GET    | `/api/projetos/`          | Lista todos os projetos       | -                   |
+| GET    | `/api/projetos/{id}/`     | Detalhe do projeto + tarefas  | -                   |
+| POST   | `/api/projetos/`          | Cria novo projeto             | `nome`              |
+| PUT    | `/api/projetos/{id}/`     | Atualiza projeto              | `nome`              |
+| PATCH  | `/api/projetos/{id}/`     | Atualiza parcial              | -                   |
+| DELETE | `/api/projetos/{id}/`     | Remove projeto (cascade)      | -                   |
+
+**Exemplo de criação:**
+```json
+{
+  "nome": "Sistema de RH",
+  "descricao": "Novo sistema interno de recursos humanos",
+  "ativo": true
+}
+```
+
+**Resposta com tarefas aninhadas (GET detalhe):**
+```json
+{
+  "id": 1,
+  "nome": "Sistema de RH",
+  "descricao": "...",
+  "data_criacao": "2025-11-19T10:00:00Z",
+  "ativo": true,
+  "tarefas": [
+    {
+      "id": 3,
+      "titulo": "Criar models",
+      "status": "concluida",
+      ...
+    }
+  ]
+}
+```
+
+---
+
+### 3. Tarefas (/tarefas/)
+
+| Método | Endpoint                | Descrição                  | Campos obrigatórios          |
+|--------|-------------------------|----------------------------|------------------------------|
+| GET    | `/api/tarefas/`         | Lista todas as tarefas     | -                            |
+| GET    | `/api/tarefas/{id}/`    | Detalhe da tarefa          | -                            |
+| POST   | `/api/tarefas/`         | Cria nova tarefa           | `titulo`, `projeto`          |
+| PUT    | `/api/tarefas/{id}/`    | Atualiza tarefa completa   | `titulo`, `projeto`          |
+| PATCH  | `/api/tarefas/{id}/`    | Atualiza parcial           | -                            |
+| DELETE | `/api/tarefas/{id}/`    | Remove tarefa              | -                            |
+
+**Exemplo de body (POST):**
+```json
+{
+  "titulo": "Implementar autenticação JWT",
+  "descricao": "Usar djangorestframework-simplejwt",
+  "projeto": 1,
+  "responsavel": 2,
+  "status": "em_andamento"
+}
+```
+
+> **Importante:**  
+> - `projeto` → ID do projeto (ex: 1)  
+> - `responsavel` → ID do responsável (pode ser omitido ou null)
+
+**Status possíveis:**
+```json
+"pendente" | "em_andamento" | "concluida"
+```
+
+---
+
+### Fluxo típico de testes (passo a passo)
+
+```bash
+# 1. Criar responsável
+POST   http://127.0.0.1:8000/api/responsaveis/
+→ pega o id retornado (ex: 1)
+
+# 2. Criar projeto
+POST   http://127.0.0.1:8000/api/projetos/
+→ pega o id (ex: 1)
+
+# 3. Criar tarefas
+POST   http://127.0.0.1:8000/api/tarefas/
+{
+  "titulo": "Criar banco de dados",
+  "projeto": 1,
+  "responsavel": 1,
+  "status": "concluida"
+}
+
+# 4. Listar projeto com tarefas aninhadas
+GET    http://127.0.0.1:8000/api/projetos/1/
+```
+
+---
 
 ## Dicas e troubleshooting
 
