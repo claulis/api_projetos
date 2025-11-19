@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'rest_framework',        # DRF
-    'drf_yasg',
+    'drf_yasg',#swaggerUI
     'api.apps.ApiConfig',    # nosso app
 ]
 
