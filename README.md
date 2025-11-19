@@ -4,7 +4,6 @@
 
 [![Django](https://img.shields.io/badge/Django-5.2.8-092E20?style=flat-square&logo=django)](https://www.djangoproject.com/)
 [![DRF](https://img.shields.io/badge/Django%20REST%20Framework-3.16.1-A30000?style=flat-square&logo=django)](https://www.django-rest-framework.org/)
-[![Swagger/OpenAPI](https://img.shields.io/badge/Swagger%2FOpenAPI-Enabled-85EA2D?style=flat-square&logo=swagger)](https://swagger.io/)
 [![Poetry](https://img.shields.io/badge/Poetry-Latest-60A5FA?style=flat-square&logo=poetry)](https://python-poetry.org/)
 
 ---
@@ -12,15 +11,13 @@
 ## Visão Geral
 
 Este repositório contém uma API construída com Django (>=5.2.8) e
-Django REST Framework para gerenciar projetos. A API já inclui
-integração com `drf-yasg` para documentação (Swagger / ReDoc) e usa
+Django REST Framework para gerenciar projetos e usa
 SQLite por padrão para facilitar o desenvolvimento.
 
 As dependências principais (definidas em `pyproject.toml`) são:
 
 - `django (>=5.2.8,<6.0.0)`
 - `djangorestframework (>=3.16.1,<4.0.0)`
-- `drf-yasg (>=1.21.11,<2.0.0)`
 
 ## Pré-requisitos
 
@@ -108,21 +105,11 @@ poetry run python manage.py runserver
 A API ficará disponível em `http://127.0.0.1:8000/` e os endpoints do app `api`
 estão sob `http://127.0.0.1:8000/api/`.
 
-### Documentação (Swagger / ReDoc)
-
-- Swagger UI: `http://127.0.0.1:8000/swagger/`
-- ReDoc: `http://127.0.0.1:8000/redoc/`
-
-Esses endpoints são servidos via `drf-yasg` e expõem a especificação da API.
-
 ## Endpoints importantes
 
 - `GET /api/projetos/` — listar projetos
 - `GET /api/projetos/{id}/` — detalhes de um projeto
 - Outros endpoints registrados pelo `DefaultRouter` do DRF no `api/urls.py`.
-
-Para ver todos os endpoints e testar via UI, abra `/swagger/` após iniciar o servidor.
-
 
 ## Dicas e troubleshooting
 
