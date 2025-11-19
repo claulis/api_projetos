@@ -4,18 +4,19 @@ from .models import Projeto, Tarefa, Responsavel
 class ResponsavelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Responsavel
-        fields = ['id', 'nome', 'email']
+        fields = '__all__'
 
 class TarefaSerializer(serializers.ModelSerializer):
-    responsaveis = ResponsavelSerializer(many=True, read_only=True)
+    projeto = serializers.PrimaryKeyRelatedField(queryset=Projeto.objects.all())
+    responsavel = serializers.PrimaryKeyRelatedField(queryset=Responsavel.objects.all(), allow_null=True, required=False)
 
     class Meta:
         model = Tarefa
-        fields = ['id', 'titulo', 'concluida', 'responsaveis']
+        fields = '__all__'
 
 class ProjetoSerializer(serializers.ModelSerializer):
-    tarefas = TarefaSerializer(many=True, read_only=True)
+    tarefas = TarefaSerializer(many=True, read_only=True)  # opcional: mostra tarefas dentro do projeto
 
     class Meta:
         model = Projeto
-        fields = ['id', 'nome', 'descricao', 'data_inicio', 'tarefas']
+        fields = '__all__'

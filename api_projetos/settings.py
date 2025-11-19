@@ -38,8 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'rest_framework',        # DRF
-    'drf_yasg',#swaggerUI
-    'api.apps.ApiConfig',    # nosso app
+    'api',    # nosso app
 ]
 
 MIDDLEWARE = [
@@ -62,10 +61,11 @@ DATABASES = {
     }
 }
 
-# DRF configuração mínima
+# DRF configuração mínima (sem autenticação obrigatória para testes rápidos)
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
 }
 
 TEMPLATES = [

@@ -1,26 +1,36 @@
-# api/models.py
 from django.db import models
 
 class Projeto(models.Model):
-    nome = models.CharField("Nome do Projeto", max_length=200)
-    descricao = models.TextField("Descrição", blank=True)
-    data_inicio = models.DateField("Data de Início")
+    nome = models.CharField(max_length=200)
+    descricao = models.TextField(blank=True, null=True)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    ativo = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.nome
+
+class Responsavel(models.Model):
+    nome = models.CharField(max_length=150)
+    email = models.EmailField(unique=True)
+    telefone = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
         return self.nome
 
 class Tarefa(models.Model):
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('em_andamento', 'Em Andamento'),
+        ('concluida', 'Concluída'),
+    ]
+
+    titulo = models.CharField(max_length=200)
+    descricao = models.TextField(blank=True, null=True)
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, related_name='tarefas')
-    titulo = models.CharField("Título da Tarefa", max_length=200)
-    concluida = models.BooleanField("Concluída", default=False)
+    responsavel = models.ForeignKey(Responsavel, on_delete=models.SET_NULL, null=True, blank=True, related_name='tarefas')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
+    data_criacao = models.DateTimeField(auto_now_add=True)
+    data_conclusao = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return self.titulo
-
-class Responsavel(models.Model):
-    tarefa = models.ForeignKey(Tarefa, on_delete=models.CASCADE, related_name='responsaveis')
-    nome = models.CharField("Nome do Responsável", max_length=100)
-    email = models.EmailField("E-mail")
-
-    def __str__(self):
-        return self.nome
+        return f"{self.titulo} ({self.projeto.nome})"
